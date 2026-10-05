@@ -13,13 +13,16 @@ void packet_handler(u_char *arg, const struct pcap_pkthdr *header, const u_char 
 
     eth_header = (struct ether_header *)packet;
     printf("====================================\n");
-    printf("²¶»ñÊı¾İ°ü³¤¶È: %d ×Ö½Ú\n", header->len);
+    printf("æ•è·æ•°æ®åŒ…é•¿åº¦: %d å­—èŠ‚\n", header->len);
+    printf("æºMAC: %s\n", ether_ntoa((struct ether_addr *)&eth_header->ether_shost));
+    printf("ç›®çš„MAC: %s\n", ether_ntoa((struct ether_addr *)&eth_header->ether_dhost));
+
 
     if(ntohs(eth_header->ether_type) == ETHERTYPE_IP)
     {
         ip_header = (struct iphdr *)(packet + 14);
-        printf("Ô´IP: %s\n", inet_ntoa(*(struct in_addr *)&ip_header->saddr));
-        printf("Ä¿µÄIP: %s\n", inet_ntoa(*(struct in_addr *)&ip_header->daddr));
+        printf("æºIP: %s\n", inet_ntoa(*(struct in_addr *)&ip_header->saddr));
+        printf("ç›®çš„IP: %s\n", inet_ntoa(*(struct in_addr *)&ip_header->daddr));
 
         unsigned int ip_header_len = ip_header->ihl * 4;
         const u_char *transport = packet + 14 + ip_header_len;
@@ -27,22 +30,22 @@ void packet_handler(u_char *arg, const struct pcap_pkthdr *header, const u_char 
         switch(ip_header->protocol)
         {
             case 1:
-                printf("Ğ­Òé: ICMP\n");
+                printf("åè®®: ICMP\n");
                 break;
             case 6:
             {
                 struct tcphdr *tcp = (struct tcphdr *)transport;
-                printf("Ğ­Òé: TCP | Ô´¶Ë¿Ú:%d  Ä¿µÄ¶Ë¿Ú:%d\n", ntohs(tcp->source), ntohs(tcp->dest));
+                printf("åè®®: TCP | æºç«¯å£:%d  ç›®çš„ç«¯å£:%d\n", ntohs(tcp->source), ntohs(tcp->dest));
                 break;
             }
             case 17:
             {
                 struct udphdr *udp = (struct udphdr *)transport;
-                printf("Ğ­Òé: UDP | Ô´¶Ë¿Ú:%d  Ä¿µÄ¶Ë¿Ú:%d\n", ntohs(udp->source), ntohs(udp->dest));
+                printf("åè®®: UDP | æºç«¯å£:%d  ç›®çš„ç«¯å£:%d\n", ntohs(udp->source), ntohs(udp->dest));
                 break;
             }
             default:
-                printf("Ğ­Òé: ÆäËû %d\n", ip_header->protocol);
+                printf("åè®®: å…¶ä»– %d\n", ip_header->protocol);
         }
     }
 }
@@ -55,21 +58,21 @@ int main()
 
     if (pcap_findalldevs(&alldevs, errbuf) == -1)
     {
-        printf("»ñÈ¡Íø¿¨ÁĞ±íÊ§°Ü: %s\n", errbuf);
+        printf("è·å–ç½‘å¡åˆ—è¡¨å¤±è´¥: %s\n", errbuf);
         return -1;
     }
     dev = alldevs;
-    printf("Ê¹ÓÃÍø¿¨Éè±¸: %s\n", dev->name);
+    printf("ä½¿ç”¨ç½‘å¡è®¾å¤‡: %s\n", dev->name);
 
     handle = pcap_open_live(dev->name, BUFSIZ, 1, 1000, errbuf);
     if(handle == NULL)
     {
-        printf("´ò¿ªÍø¿¨Ê§°Ü: %s\n", errbuf);
+        printf("æ‰“å¼€ç½‘å¡å¤±è´¥: %s\n", errbuf);
         pcap_freealldevs(alldevs);
         return -1;
     }
 
-    printf("¿ªÊ¼×¥°ü£¬°´ Ctrl+C Í£Ö¹\n");
+    printf("å¼€å§‹æŠ“åŒ…ï¼ŒæŒ‰ Ctrl+C åœæ­¢\n");
     pcap_loop(handle, 0, packet_handler, NULL);
 
     pcap_close(handle);
