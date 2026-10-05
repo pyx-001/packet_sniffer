@@ -4,9 +4,10 @@
 ## 功能
 捕获网卡数据包，解析以太网帧、IP头、TCP/UDP/ICMP头部，输出：
 1.数据包长度
-2.源IP、目的IP
-3.协议类型
-4.TCP/UDP源端口、目的端口
+2.源MAC、目的MAC
+3.源IP、目的IP
+4.协议类型
+5.TCP/UDP源端口、目的端口
 
 ## 环境依赖
 Ubuntu(WSL2)，libpcap
