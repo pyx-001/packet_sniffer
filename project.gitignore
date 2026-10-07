@@ -1,0 +1,14 @@
+# C编译产物
+*.o
+sniffer
+a.out
+*.out
+
+#编辑器临时文件
+*.swp
+*.swo
+*~
+
+#系统文件
+.DS_Store
+Thumbs.db
